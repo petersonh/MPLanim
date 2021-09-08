@@ -25,7 +25,9 @@ class Timeline:
     
     def __animate(self, i):
         for animation in self._animations:
-            self.print_progress(i / self._duration)
+            self.print_progress((i+1) / self._duration)
+            # print(i)
+            # print(self._duration)
             animation_start_frame = self.__milliseconds_to_frames(animation.start_time, self._frames_per_second)
             animation_end_frame = self.__milliseconds_to_frames(animation.duration, self._frames_per_second) + animation_start_frame
             if i >= animation_start_frame and i <= animation_end_frame:
@@ -47,8 +49,8 @@ class Timeline:
         progress_bar = progress_bars + remainder_bars
         message += progress_bar
         print(message + " " + str(percent_complete) + "%  ", end='\r')
-        if percent_complete == 100:
-            print('\n')
+        # if percent_complete == 100:
+        #     print(message + " 100%  ", end='\r')
 
     def save(self, filename: str):
         FFMpegWriter = matplotlib.animation.writers['ffmpeg']
