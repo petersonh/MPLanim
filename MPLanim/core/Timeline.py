@@ -49,8 +49,6 @@ class Timeline:
         progress_bar = progress_bars + remainder_bars
         message += progress_bar
         print(message + " " + str(percent_complete) + "%  ", end='\r')
-        # if percent_complete == 100:
-        #     print(message + " 100%  ", end='\r')
 
     def save(self, filename: str):
         FFMpegWriter = matplotlib.animation.writers['ffmpeg']
