@@ -8,12 +8,10 @@ from IPython.display import HTML, display
 
 class Timeline:
     
-    def __init__(self, animations: List[Animation], fig: matplotlib.figure.Figure, frames_per_second: int):
-        self._animations = animations
+    def __init__(self, fig: matplotlib.figure.Figure, frames_per_second: int):
+        self._fig = fig
         self._frames_per_second = frames_per_second
-        self._duration = max(list(map(lambda x: x.start_time + x.duration, animations)))
-        self._duration = self.__milliseconds_to_frames(self._duration, frames_per_second) + 1        
-        self._animation = matplotlib.animation.FuncAnimation(fig, self.__animate, self._duration, init_func=lambda: None, interval=1000/frames_per_second)
+        self._animations = []
 
     @staticmethod
     def __milliseconds_to_frames(milliseconds, frames_per_second) -> int:
@@ -26,8 +24,6 @@ class Timeline:
     def __animate(self, i):
         for animation in self._animations:
             self.print_progress((i+1) / self._duration)
-            # print(i)
-            # print(self._duration)
             animation_start_frame = self.__milliseconds_to_frames(animation.start_time, self._frames_per_second)
             animation_end_frame = self.__milliseconds_to_frames(animation.duration, self._frames_per_second) + animation_start_frame
             if i >= animation_start_frame and i <= animation_end_frame:
@@ -55,3 +51,9 @@ class Timeline:
         metadata = dict(title='', artist='', comment='')
         writer = FFMpegWriter(fps=self._frames_per_second, bitrate=5000, metadata=metadata)
         self._animation.save(filename + ".mp4", writer=writer, dpi=120)
+
+    def add_anim(self, anim: Animation):
+        self._animations.append(anim)
+        self._duration = max(list(map(lambda x: x.start_time + x.duration, self._animations)))
+        self._duration = self.__milliseconds_to_frames(self._duration, self._frames_per_second) + 1        
+        self._animation = matplotlib.animation.FuncAnimation(self._fig, self.__animate, self._duration, init_func=lambda: None, interval=1000/self._frames_per_second)
